@@ -78,12 +78,12 @@ func (s *Storage) GetTasks(search_st *Search) ([]*models.Task, error) {
 	var query string
 	args := []any{}
 
-	query = "SELECT * FROM scheduler ORDER BY date LIMIT :limit"
+	query = "SELECT id, date, title, comment, repeat FROM scheduler ORDER BY date LIMIT :limit"
 	if search_st.Active && search_st.Search != "" {
-		query = "SELECT * FROM scheduler WHERE title LIKE :search OR comment LIKE :search ORDER BY date LIMIT :limit"
+		query = "SELECT id, date, title, comment, repeat FROM scheduler WHERE title LIKE :search OR comment LIKE :search ORDER BY date LIMIT :limit"
 		args = append(args, sql.Named("search", fmt.Sprintf("%%%s%%", search_st.Search)))
 	} else if search_st.Active && search_st.Date != "" {
-		query = "SELECT * FROM scheduler WHERE date = :date LIMIT :limit"
+		query = "SELECT id, date, title, comment, repeat FROM scheduler WHERE date = :date LIMIT :limit"
 		args = append(args, sql.Named("date", search_st.Date))
 	}
 
@@ -104,7 +104,10 @@ func (s *Storage) GetTasks(search_st *Search) ([]*models.Task, error) {
 
 	for rows.Next() {
 		var task models.Task
-		rows.Scan(&task.ID, &task.Date, &task.Title, &task.Comment, &task.Repeat)
+		err = rows.Scan(&task.ID, &task.Date, &task.Title, &task.Comment, &task.Repeat)
+		if err != nil {
+			return nil, fmt.Errorf("%w", err)
+		}
 		tasks = append(tasks, &task)
 	}
 
@@ -114,7 +117,7 @@ func (s *Storage) GetTasks(search_st *Search) ([]*models.Task, error) {
 func (s *Storage) GetTaskByID(id string) (*models.Task, error) {
 	var task models.Task
 
-	query := "SELECT * FROM scheduler WHERE id = ?"
+	query := "SELECT id, date, title, comment, repeat FROM scheduler WHERE id = ?"
 
 	stmt, err := s.db.Prepare(query)
 	if err != nil {

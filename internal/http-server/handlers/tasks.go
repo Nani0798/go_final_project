@@ -7,7 +7,7 @@ import (
 	"log"
 	"net/http"
 
-	"go_final_project/internal/storage/sqlite"
+	"go_final_project/storage/sqlite"
 	"go_final_project/pkg/models"
 )
 
@@ -29,7 +29,7 @@ func writeErrorResponse(w http.ResponseWriter, err error, statusCode int) {
 	w.Write(jsonResponse)
 }
 
-func SaveTask(taskSaver TaskSaver) http.HandlerFunc {
+func SaveTask(taskSaver TaskScheduler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var task models.Task
 
@@ -54,7 +54,7 @@ func SaveTask(taskSaver TaskSaver) http.HandlerFunc {
 	}
 }
 
-func GetTasks(taskGetter TaskGetter) http.HandlerFunc {
+func GetTasks(taskGetter TaskScheduler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		search := r.URL.Query().Get("search")
 
@@ -74,7 +74,7 @@ func GetTasks(taskGetter TaskGetter) http.HandlerFunc {
 	}
 }
 
-func GetTaskByID(taskGetter TaskGetter) http.HandlerFunc {
+func GetTaskByID(taskGetter TaskScheduler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id := r.URL.Query().Get("id")
 
@@ -99,7 +99,7 @@ func GetTaskByID(taskGetter TaskGetter) http.HandlerFunc {
 	}
 }
 
-func UpdateTask(taskUpdater TaskUpdater) http.HandlerFunc {
+func UpdateTask(taskUpdater TaskScheduler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var task models.Task
 
@@ -123,7 +123,7 @@ func UpdateTask(taskUpdater TaskUpdater) http.HandlerFunc {
 	}
 }
 
-func MarkTaskCompleted(taskConditionUpdater TaskConditionUpdater) http.HandlerFunc {
+func MarkTaskCompleted(taskConditionUpdater TaskScheduler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id := r.URL.Query().Get("id")
 
@@ -142,7 +142,7 @@ func MarkTaskCompleted(taskConditionUpdater TaskConditionUpdater) http.HandlerFu
 	}
 }
 
-func DeleteTask(taskRemover TaskRemover) http.HandlerFunc {
+func DeleteTask(taskRemover TaskScheduler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id := r.URL.Query().Get("id")
 

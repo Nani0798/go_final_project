@@ -9,12 +9,14 @@ import (
 	"time"
 )
 
+ const d = "20060102"
+
 func NextDate(now time.Time, date string, repeat string) (string, error) {
 	if repeat == "" {
 		return "", fmt.Errorf("column 'repeat' is empty")
 	}
 
-	currentDate, err := time.Parse("20060102", date)
+	currentDate, err := time.Parse(d, date)
 	if err != nil {
 		return "", fmt.Errorf("invalid date format: %w", err)
 	}
@@ -65,7 +67,7 @@ func NextDate(now time.Time, date string, repeat string) (string, error) {
 		return "", fmt.Errorf("invalid repeat format: %s", repeat)
 	}
 
-	return newDate.Format("20060102"), nil
+	return newDate.Format(d), nil
 }
 
 func ParseDays(daysStr string) (int, error) {

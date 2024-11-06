@@ -5,16 +5,16 @@ import (
 	"strconv"
 	"time"
 
-	"go_final_project/internal/storage/sqlite"
 	"go_final_project/pkg/models"
+	"go_final_project/storage/sqlite"
 )
 
-type Planner struct {
+type Scheduler struct {
 	Storage *sqlite.Storage
 }
 
-func NewScheduler(dataBase *sqlite.Storage) *Planner {
-	return &Planner{
+func NewScheduler(dataBase *sqlite.Storage) *Scheduler {
+	return &Scheduler{
 		Storage: dataBase,
 	}
 }
@@ -28,7 +28,7 @@ type TaskScheduler interface {
 	DeleteTask(string) error
 }
 
-func (s *Planner) SaveTask(task *models.Task) (int64, error) {
+func (s *Scheduler) SaveTask(task *models.Task) (int64, error) {
 	if err := check(task); err != nil {
 		return 0, err
 	}
@@ -40,7 +40,7 @@ func (s *Planner) SaveTask(task *models.Task) (int64, error) {
 	return id, nil
 }
 
-func (s *Planner) GetTasks(search string) ([]*models.Task, error) {
+func (s *Scheduler) GetTasks(search string) ([]*models.Task, error) {
 
 	var sr_st sqlite.Search
 	if search != "" {
@@ -49,7 +49,7 @@ func (s *Planner) GetTasks(search string) ([]*models.Task, error) {
 		if err != nil {
 			sr_st.Search = search
 		} else {
-			sr_st.Date = date.Format("20060102")
+			sr_st.Date = date.Format(d)
 		}
 	}
 
@@ -61,7 +61,7 @@ func (s *Planner) GetTasks(search string) ([]*models.Task, error) {
 	return tasks, nil
 }
 
-func (s *Planner) GetTaskByID(id string) (*models.Task, error) {
+func (s *Scheduler) GetTaskByID(id string) (*models.Task, error) {
 	task, err := s.Storage.GetTaskByID(id)
 	if err != nil {
 		return nil, err
@@ -69,7 +69,7 @@ func (s *Planner) GetTaskByID(id string) (*models.Task, error) {
 	return task, nil
 }
 
-func (s *Planner) UpdateTask(task *models.Task) error {
+func (s *Scheduler) UpdateTask(task *models.Task) error {
 	if task.ID == "" {
 		return fmt.Errorf("id is empty")
 	}
@@ -97,16 +97,16 @@ func check(task *models.Task) error {
 	var nextdate string
 
 	if task.Date == "" {
-		nextdate = now.Format("20060102")
+		nextdate = now.Format(d)
 	} else {
-		date, err := time.Parse("20060102", task.Date)
+		date, err := time.Parse(d, task.Date)
 		if err != nil {
 			return fmt.Errorf("%w", err)
 		}
-		nextdate = date.Format("20060102")
+		nextdate = date.Format(d)
 		if date.Before(now) {
 			if task.Repeat == "" {
-				nextdate = now.Format("20060102")
+				nextdate = now.Format(d)
 			} else {
 				nextdate, err = NextDate(now, task.Date, task.Repeat)
 				if err != nil {
@@ -120,7 +120,7 @@ func check(task *models.Task) error {
 	return nil
 }
 
-func (s *Planner) MarkTaskCompleted(id string) error {
+func (s *Scheduler) MarkTaskCompleted(id string) error {
 	var now = time.Now().Truncate(24 * time.Hour)
 	task, err := s.GetTaskByID(id)
 	if err != nil {
@@ -146,7 +146,7 @@ func (s *Planner) MarkTaskCompleted(id string) error {
 	return nil
 }
 
-func (s *Planner) DeleteTask(id string) error {
+func (s *Scheduler) DeleteTask(id string) error {
 	if err := s.Storage.DeleteTask(id); err != nil {
 		return err
 	}

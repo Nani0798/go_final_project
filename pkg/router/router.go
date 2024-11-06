@@ -1,14 +1,14 @@
 package router
 
 import (
-	"go_final_project/internal/scheduler"
-	"go_final_project/internal/storage/sqlite"
+	
 	"log"
 	"net/http"
 
 	"go_final_project/internal/config"
 	"go_final_project/internal/http-server/handlers"
-
+	"go_final_project/internal/scheduler"
+	"go_final_project/storage/sqlite"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 )

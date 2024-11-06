@@ -3,10 +3,11 @@ package handlers
 import (
 	mwAuth "go_final_project/internal/http-server/middleware/auth"
 	"go_final_project/internal/scheduler"
+
 	"github.com/go-chi/chi/v5"
 )
 
-func RegisterRoutes(router *chi.Mux, scheduler *scheduler.Planner) {
+func RegisterRoutes(router *chi.Mux, scheduler *scheduler.Scheduler) {
 	router.Get("/api/nextdate", GetNextDate)
 	router.Post("/api/signin", LoginHandler)
 

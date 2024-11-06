@@ -28,5 +28,6 @@ func GetNextDate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(newDate))
+	_, _ = w.Write([]byte(newDate))
+
 }
